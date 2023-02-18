@@ -1,6 +1,5 @@
 package com.example.compose_example
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,35 +27,35 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Compose_ExampleTheme {
-                    MyApp(modifier = Modifier.fillMaxSize())
+            Compose_ExampleTheme { // Theme.kt 파일을 일괄 적용하기 위해 사용
+                    MyApp(modifier = Modifier.fillMaxSize()) // 상하좌우 maxSize로 설정
                 }
             }
         }
 }
 
 @Composable
-fun MyApp(modifier: Modifier = Modifier){
+fun MyApp(modifier: Modifier = Modifier){ // 인자값으로 Modifier값을 받는다.
 
-    var shouldShowOnboarding by rememberSaveable {
+    var shouldShowOnboarding by rememberSaveable {  //rememberSaveable은 LazyColumn이 재사용될 때 state 상태를 잃어버리는 걸 방지하는 함수이다.
         mutableStateOf(true)
     }
 
     Surface(modifier,color = MaterialTheme.colorScheme.background) {
         if(shouldShowOnboarding){
-            OnboardingScreen(onContinueClicked = {shouldShowOnboarding = false})
+            OnboardingScreen(onContinueClicked = {shouldShowOnboarding = false}) //OnboardingScreen에 onContinueClicked 람다식에 shouldShowOnboarding = false 전달
         }else{
-            Greetings()
+            Greetings() // 최초 shouldShowOnboarding이 작동하고 false로 바뀌면 이후 Greetings() composable이 호출된다.
         }
     }
 }
 
 @Composable
 fun Greeting(name : String){
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    val extraPadding by animateDpAsState(
+    var expanded by rememberSaveable { mutableStateOf(false) } // LazyColumn의 재사용에 의한 상태 기억
+    val extraPadding by animateDpAsState( //생성된 Greeting에 버튼 클릭 애니메이션을 적용하는 함수
         if (expanded) 48.dp else 0.dp,
-        animationSpec = spring(
+        animationSpec = spring( //spring 기반의 애니메이션 사용
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
         )
@@ -118,19 +117,11 @@ fun OnboardingScreen(
 @Composable
 private fun Greetings(
     modifier: Modifier = Modifier,
-    names: List<String> = List(1000){"$it"}
+    names: List<String> = List(1000){"$it"} // it을 사용해 단일 매개변수로 list 생성
 ) {
     LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
         items(items = names) {name ->
             Greeting(name = name)
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 320)
-@Composable
-fun GreetingsPreView(){
-    Compose_ExampleTheme {
-        Greetings()
     }
 }
